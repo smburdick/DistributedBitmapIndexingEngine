@@ -3,12 +3,15 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class SlaveNode implements Remote {
+public class SlaveNode implements ISlaveNode {
 
     private String id;
 
@@ -19,8 +22,13 @@ public class SlaveNode implements Remote {
     public static void main(String[] args) {
         String id = args[0]; // TODO parameterize arg list
         // TODO: setup name and IP address correctly
+        //System.setProperty("java.rmi.server.hostname","1.2.3.4");
         try {
-            Naming.rebind("//localhost/SlaveNode" + id, new SlaveNode(id));
+            SlaveNode node = new SlaveNode(id);
+            Remote stub = UnicastRemoteObject.exportObject(node, 0);
+            Registry registry = LocateRegistry.createRegistry(1099);
+            registry.rebind("SlaveNode_" + id, stub);
+            //Naming.bind("1.2.3.4" + id, new SlaveNode(id));
         } catch (Exception e) {
             System.err.println("Slave node exception: " + e.toString());
             e.printStackTrace();
