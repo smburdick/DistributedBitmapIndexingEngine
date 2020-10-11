@@ -36,7 +36,7 @@ public class SlaveNode implements ISlaveNode {
     }
 
     // RMI
-    public void putVector(BitmapVector vector) throws IllegalArgumentException, RemoteException {
+    public void putVector(ActiveBitCollection vector) throws IllegalArgumentException, RemoteException {
         if (vector == null) {
             System.out.println("Null vector"); // TODO throw exception
             return;
@@ -45,16 +45,21 @@ public class SlaveNode implements ISlaveNode {
         final String path = getVectorPath(vector.toString(), vector.getId());
         try {
             FileWriter writer = new FileWriter(path);
-            vector.getWords().forEach(word -> {
+            while (vector.getSegmentIterator().hasNext()) {
                 try {
-                    writer.write(word + "/n");
+                    writer.write(vector.getSegmentIterator() + "/n");
                 } catch (IOException e) {
                     handleIOException(e);
                 }
-            });
+            }
         } catch (IOException e) {
             handleIOException(e);
         }
+
+    }
+
+    // RMI
+    public ActiveBitCollection getWAHVector(String vectorId) {
 
     }
 
@@ -74,7 +79,7 @@ public class SlaveNode implements ISlaveNode {
             SlaveNode node = (SlaveNode) Naming.lookup(otherNode);
             switch (vectorType) {
                 case WAH:
-                    node.putVector(new WAHVector(vectorId, list));
+                    //node.putVector(new WAHVector(vectorId, list));
                 default:
                     throw new IllegalArgumentException();
             }
