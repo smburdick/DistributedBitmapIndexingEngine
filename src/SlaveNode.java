@@ -60,7 +60,7 @@ public class SlaveNode implements ISlaveNode {
 
     // RMI
     public ActiveBitCollection getWAHVector(String vectorId) {
-
+      return null;
     }
 
     // RMI

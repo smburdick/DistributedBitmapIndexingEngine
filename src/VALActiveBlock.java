@@ -1,4 +1,4 @@
-package common;
+
 
 
 public class VALActiveBlock implements ActiveSegment{

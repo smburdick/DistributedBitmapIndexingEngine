@@ -1,18 +1,17 @@
-import common.HexHolder;
 
 public class WAHActiveSegment implements ActiveSegment {
 
-	
+
 	private long litRepOfFill=0;
 	private boolean isFill;
 	private byte fillValue = 0;
-	private long numSegments; 
+	private long numSegments;
 	//it is an array because the literal value might need to be chunked if decodeLen < encodeLen
 	private long litValues;
 
 	/**
 	 *The constructor just sets up the values for this segment
-	 * 
+	 *
 	 *@param value
 	 *            The long value of this segment
 	 * */
@@ -50,7 +49,7 @@ public class WAHActiveSegment implements ActiveSegment {
 		this.numSegments--;
 		//remember ++ evaluates first then increments
 		return this.litValues;
-		
+
 	}
 
 	@Override
@@ -66,7 +65,7 @@ public class WAHActiveSegment implements ActiveSegment {
 	@Override
 	public void usedNumWords(long numUsed) {
 		this.numSegments-=numUsed;
-		
+
 	}
 
 	@Override

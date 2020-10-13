@@ -1,8 +1,3 @@
-package common;
-
-import bcf.compression.WLDCompressor;
-import run.WLD_QueryMain;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +30,7 @@ public class WLDAlgo2 {
 
 			if (seenCol.isEmpty()) {  // first run is to pick the top column
 				int q = 0;
-				double lgst = 0.0; 
+				double lgst = 0.0;
 				double tmp = 0.0;
 				// getting the top column frequency
 				for (int i=0; i < VLCConstants.numCols; i++) {
@@ -47,22 +42,22 @@ public class WLDAlgo2 {
 						}
 					}
 				}
-				lgst = 0.0; 
+				lgst = 0.0;
 				tmp = 0.0;
 				// optimize for this top column with its associated columns.
 				//System.out.println("processing query col:"+q);
 				seenCol.put(q+"", true);
 				list = VLCConstants.QRel.get(q+"");
-				
+
 				//*
                 double WQ = 0;
                 double WCR = 0;
 				double history = VLCConstants.QHistoryFreq.get(q+"")/total + (1-VLCConstants.ALPHA)*VLCConstants.colHistory.get(q);
-				
+
         		// generate new weight for optimization
-        		for (int s=4; s < VLCConstants.WORD_LEN; s++) {                  
+        		for (int s=4; s < VLCConstants.WORD_LEN; s++) {
         			// loop through and calculate the associates
-        			
+
         			double segRatio = (double)s/(double)VLCConstants.WORD_LEN;
        			    WQ = VLCConstants.ColEncode.get(q+"") * segRatio * history;
        			    WCR = VLCConstants.WCR_Table.get(s+":"+q) * (1 - history);
@@ -72,7 +67,7 @@ public class WLDAlgo2 {
         				// do it for the associate queries that not been done
         				// by higher frequency query (not been seen).
         				if (!seenCol.containsKey(c)) {
-        					double h2 = VLCConstants.QHistoryFreq.get(c)/total;  
+        					double h2 = VLCConstants.QHistoryFreq.get(c)/total;
         					h2 = VLCConstants.ALPHA * h2 + (1-VLCConstants.ALPHA)*VLCConstants.colHistory.get(Integer.parseInt(c));
         					WQ += (VLCConstants.GCD_MATRIX[s][VLCConstants.orgSeglen.get(c)] * segRatio * h2);
         					WCR += (VLCConstants.WCR_Table.get(s+":"+c) * (1 - h2));
@@ -117,12 +112,12 @@ public class WLDAlgo2 {
 				int optSeglen = comSeglen;
 				double maxW = 0;
 				double w = 0;
-				
-				list = VLCConstants.QRel.get(i+"");	
+
+				list = VLCConstants.QRel.get(i+"");
 
 				for (int s=4; s < VLCConstants.WORD_LEN; s++) {
 					if (s % comSeglen == 0)  {
-						
+
 						double segRatio = (double)s/(double)VLCConstants.WORD_LEN;
 						double history = 0;
 						double preH = 0;
@@ -137,15 +132,15 @@ public class WLDAlgo2 {
 						// calculate WQ & WCR
 						double WQ =  s * segRatio;
 						if (VLCConstants.ColEncode.get(i+"") != null)
-							WQ = VLCConstants.ColEncode.get(i+"") * segRatio * history; 
+							WQ = VLCConstants.ColEncode.get(i+"") * segRatio * history;
 						int colCnt = 1;
 						for(String c: list) {
 							double h2 = 0;
 							colCnt++;
-							if (VLCConstants.QHistoryFreq.get(c+"") != null) 
+							if (VLCConstants.QHistoryFreq.get(c+"") != null)
 								h2 = VLCConstants.QHistoryFreq.get(c+"")/total;
 							h2 = VLCConstants.ALPHA * h2 + (1-VLCConstants.ALPHA)*VLCConstants.colHistory.get(Integer.parseInt(c));
-							
+
 							WQ += (VLCConstants.GCD_MATRIX[s][VLCConstants.orgSeglen.get(c)] * segRatio * h2);
 							WCR += (VLCConstants.WCR_Table.get(s+":"+c) * (1 - h2));
 						}
@@ -163,7 +158,7 @@ public class WLDAlgo2 {
 				}
 				seenCol.put(i+"", true);
 				VLCConstants.optSeglen.put(i+"",optSeglen);
-			}			
+			}
 		}
 
 		//System.out.println(" Update current active bitmaps and re compress columns with optimzed segment lenght...");
@@ -200,15 +195,15 @@ public class WLDAlgo2 {
 				WLD_QueryMain.alreadyLoaded.put(i+"", a); //overwrite old key
 				VLCConstants.ColEncode.put(""+i,curSeglen);
 				VLCConstants.colCompressed += 1;
-			} 
+			}
 
 			// update history weight for next optimization period
 			double h = 0;
 			if (VLCConstants.QHistoryFreq.get(i+"") != null)
 				h = VLCConstants.QHistoryFreq.get(i+"")/total;
-			h = VLCConstants.ALPHA * h + (1-VLCConstants.ALPHA)*VLCConstants.colHistory.get(i);		
+			h = VLCConstants.ALPHA * h + (1-VLCConstants.ALPHA)*VLCConstants.colHistory.get(i);
 			VLCConstants.colHistory.put(i,h);
-			
+
 			VLCConstants.totalCurFsize += VLCConstants.colSizeInBytes.get(curSeglen+":"+i);
 		}
 

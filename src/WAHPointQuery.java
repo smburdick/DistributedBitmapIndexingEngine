@@ -1,5 +1,3 @@
-import common.VLCActiveBitCol;
-
 import java.util.Iterator;
 
 public class WAHPointQuery extends PointQuery {

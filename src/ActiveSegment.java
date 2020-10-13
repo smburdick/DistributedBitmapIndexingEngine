@@ -1,5 +1,9 @@
 
+
 public interface ActiveSegment {
+	
+	
+	
 	
 	/**
 	 * Returns the number of segments represented by this 

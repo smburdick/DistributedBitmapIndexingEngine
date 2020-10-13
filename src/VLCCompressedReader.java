@@ -1,6 +1,3 @@
-import common.HexHolder;
-import common.VALActiveBitCollection;
-import common.VLCActiveBitCol;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -12,13 +9,13 @@ public class VLCCompressedReader implements CompressedBitmapReader {
 	 * Assumes that the column is prefaced with a byte that indicates
 	 * the segmentation length used to encode it. It also assumes
 	 * that segments were packed in 32 bit words
-	 * 
+	 *
 	 * @return the ActiveBitCollection representation of the column
 	 */
 	@Override
 	public ActiveBitCollection readColumn(DataInputStream columnIn) {
 		try{
-			
+
 			//read in segment length
 			int seglen = columnIn.readByte();
 			//add one to account for the flag bit
@@ -34,7 +31,7 @@ public class VLCCompressedReader implements CompressedBitmapReader {
 			int segLenPlusFlag = seglen+1;
 			while (true)
 			{
-			
+
 				try
 				{	//Read a word in at a time: for seglens longer than 32 we'll need a long
 					int temp = columnIn.readInt();
@@ -46,7 +43,7 @@ public class VLCCompressedReader implements CompressedBitmapReader {
 						//Add what we found to column.
 						column.appendWord(t);
 					}
-					
+
 				}
 				//Thrown only after all the data is read from the file
 				catch (EOFException eof)
